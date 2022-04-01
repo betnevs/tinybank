@@ -1,3 +1,3 @@
-module github.com/betNevS/tinybank
+module tinybank
 
 go 1.17
