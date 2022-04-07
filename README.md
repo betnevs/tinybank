@@ -1,7 +1,7 @@
 # tinybank
 A practice project implemented by Go.
 
-## Install
+## Installation
 1. Deploy mysql with [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 ``` makefile
 make mysql
@@ -14,3 +14,5 @@ make createdb
 ``` makefile
 make migrateup
 ```
+
+## 

@@ -1,5 +1,5 @@
 CREATE TABLE `accounts` (
-    `id` bigint PRIMARY KEY,
+    `id` bigint PRIMARY KEY AUTO_INCREMENT,
     `owner` varchar(128) NOT NULL,
     `balance` bigint NOT NULL,
     `currency` varchar(32) NOT NULL,
@@ -7,14 +7,14 @@ CREATE TABLE `accounts` (
 );
 
 CREATE TABLE `entries` (
-    `id` bigint PRIMARY KEY,
+    `id` bigint PRIMARY KEY AUTO_INCREMENT,
     `account_id` bigint NOT NULL,
     `amount` bigint NOT NULL,
     `created_at` datetime NOT NULL
 );
 
 CREATE TABLE `transfers` (
-    `id` bigint PRIMARY KEY,
+    `id` bigint PRIMARY KEY AUTO_INCREMENT,
     `from_account_id` bigint NOT NULL,
     `to_account_id` bigint NOT NULL,
     `amount` bigint NOT NULL,
