@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+var txKey = struct{}{}
+
 type Store struct {
 	*Queries
 	db *sql.DB
@@ -56,7 +58,6 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 	var result TransferTxResult
 
 	err := store.execTx(ctx, func(q *Queries) error {
-
 		res, err := q.CreateTransfer(ctx, CreateTransferParams{
 			FromAccountID: arg.FromAccountID,
 			ToAccountID:   arg.ToAccountID,
@@ -100,8 +101,23 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 		}
 		result.ToEntryID = insertId
 
-		// TODO update account's balance
+		err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+			Amount: -arg.Amount,
+			ID:     arg.FromAccountID,
+		})
+		if err != nil {
+			return err
+		}
+		result.FromAccountID = arg.FromAccountID
 
+		err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+			Amount: arg.Amount,
+			ID:     arg.ToAccountID,
+		})
+		if err != nil {
+			return err
+		}
+		result.ToAccountID = arg.ToAccountID
 		return nil
 	})
 
