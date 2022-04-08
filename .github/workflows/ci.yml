@@ -14,16 +14,29 @@ jobs:
     name: Test
     runs-on:
       - ubuntu-latest
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: tinybank
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10
+
     steps:
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
         with:
-          go-version: ^1.17
+          go-version: ^1.16
         id: go
 
       - name: Check out code
         uses: actions/checkout@v2
+
+      - name: Run migrations
+        uses: make migrateup
 
       - name: Run unit test
         run: make test
