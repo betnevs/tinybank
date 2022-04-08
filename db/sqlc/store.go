@@ -101,26 +101,35 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 		}
 		result.ToEntryID = insertId
 
-		err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			Amount: -arg.Amount,
-			ID:     arg.FromAccountID,
-		})
+		if arg.FromAccountID < arg.ToAccountID {
+			err = addMoney(ctx, q, arg.FromAccountID, -arg.Amount, arg.ToAccountID, arg.Amount)
+		} else {
+			err = addMoney(ctx, q, arg.ToAccountID, arg.Amount, arg.FromAccountID, -arg.Amount)
+		}
 		if err != nil {
 			return err
 		}
 		result.FromAccountID = arg.FromAccountID
-
-		err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			Amount: arg.Amount,
-			ID:     arg.ToAccountID,
-		})
-		if err != nil {
-			return err
-		}
 		result.ToAccountID = arg.ToAccountID
 		return nil
 	})
-
 	return result, err
+}
 
+func addMoney(ctx context.Context, q *Queries, accountID1 int64, amount1 int64, accountID2 int64, amount2 int64) error {
+	err := q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		Amount: amount1,
+		ID:     accountID1,
+	})
+	if err != nil {
+		return err
+	}
+	err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		Amount: amount2,
+		ID:     accountID2,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
