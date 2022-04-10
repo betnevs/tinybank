@@ -10,8 +10,14 @@ dropdb:
 migrateup:
 	 migrate -path db/migration -database "mysql://root:secret@tcp(127.0.0.1:3306)/tinybank" -verbose up
 
+migrateup1:
+	 migrate -path db/migration -database "mysql://root:secret@tcp(127.0.0.1:3306)/tinybank" -verbose up 1
+
 migratedown:
 	 migrate -path db/migration -database "mysql://root:secret@tcp(127.0.0.1:3306)/tinybank" -verbose down
+
+migratedown1:
+	migrate -path db/migration -database "mysql://root:secret@tcp(127.0.0.1:3306)/tinybank" -verbose down 1
 
 sqlc:
 	sqlc generate
